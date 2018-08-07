@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <objc/runtime.h>
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
@@ -14,6 +15,10 @@ int main(int argc, const char * argv[]) {
         NSLog(@"Hello, World!");
         
         NSObject *objc = [[NSObject alloc] init];
+        
+        // 获取 NSObject 实例对象的成员变量在内存中所占的大小
+        NSUInteger ivarSize = class_getInstanceSize([NSObject class]);
+        NSLog(@"%zd", ivarSize);
         
     }
     return 0;

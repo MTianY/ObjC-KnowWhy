@@ -56,3 +56,11 @@ typedef struct objc_class *Class;
 	- 从右往左读
 	- `[NSObject alloc]` .内存分配存储空间给结构体(NSObject 的本质就是结构体,见上面),结构体中只有`isa`,其内存地址就是这个结构体的内存地址
 	- 左边 `NSObject *obj`指针指向这个分配的内存地址.所以 obj 存的地址就是 isa 的内存地址
+
+- 获取 NSObject `实例对象的成员变量`在内存中所占用的大小,打印结果为 8.
+
+```objc
+#import <objc/runtime.h>
+NSUInteger ivarSize = class_getInstanceSize([NSObject class]);
+NSLog(@"%zd",ivarSize);
+```
