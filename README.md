@@ -64,3 +64,11 @@ typedef struct objc_class *Class;
 NSUInteger ivarSize = class_getInstanceSize([NSObject class]);
 NSLog(@"%zd",ivarSize);
 ```
+
+- 获取 objc 指针指向内存的大小,结果为16
+
+```objc
+#import <malloc/malloc.h>
+
+NSUInteger pointAddressSize = malloc_size((__bridge const void *)(objc));
+```
