@@ -25,7 +25,7 @@ clang -rewrite-objc (OC文件) -o (输出的C++文件)
 xcrun -sdk iphoneos clang -arch arm64 -rewrite-objc (OC文件) -o (输入的 C++文件)
 ```
 
-#### 3.查看`Objective-C`对象的底层实现
+#### 3.`NSObject`对象在内存中占用的大小
 
 - `main.m` 文件中, 通过`control+command` 点进去 NSObject 查看后,发现 NSObject 对象其实如下:
 
@@ -71,4 +71,38 @@ NSLog(@"%zd",ivarSize);
 #import <malloc/malloc.h>
 
 NSUInteger pointAddressSize = malloc_size((__bridge const void *)(objc));
+```
+
+- 所以说, NSObject 对象创建时内存为其开辟的16字节的控件,其中 isa 占用8字节大小.
+
+#### 4.继承自 NSObject 的 TYPerson 类在内存中占用情况
+
+```objc
+@interface TYPerson : NSObject
+
+{
+	@public
+	int no;
+	int age;
+}
+
+@end
+```
+
+编译成`c++`文件后,得到 TYPerson 的表现形式为
+
+```c++
+struct TYPerson_IMPL {
+	struct NSObject_IMPL NSObject_IVARS;
+	int no;
+	int age;
+};
+```
+
+其中
+
+```objc
+struct NSObject_IMPL {
+	Class isa;
+};
 ```
