@@ -1,4 +1,10 @@
-## Objective-C Object 在内存中的表现形式.
+## Objective-C 对象在内存中的表现形式.
+
+> Objective-C 中的对象,主要分为3种
+> 
+> - instance 对象(实例对象)
+> - class 对象 (类对象)
+> - meta-class 对象(元类对象)
 
 #### 1. OC对象、类主要是基于 C/C++的`结构体`实现的.
 
