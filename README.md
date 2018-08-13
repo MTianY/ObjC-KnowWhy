@@ -4,11 +4,42 @@
 > 
 > - instance 对象(实例对象)
 > 	- instance 对象就是通过类 alloc 出来的对象.每次调用 alloc 方法都会产生新的 instance 对象.它们分别占用不同的内存.
-> - instance 对象在内存中存储的信息?
-> 	- isa 指针
-> 	- 其他`成员变量`
+> 	- instance 对象在内存中存储的信息?
+> 		- isa 指针
+> 		- 其他`成员变量`
 > - class 对象 (类对象)
+> 	- class 对象获取办法有如下几种
+> 	
+> 	```objc
+> 	// 1.创建 instance 对象
+> 	NSObject obj1 = [[NSObject alloc] init];
+> 	NSObject obj2 = [[NSObject alloc] init];
+> 
+> 	// 2.获取 instance 对象的类对象
+> 	Class objClass1 = [obj1 class];
+> 	Class objClass2 = [obj2 class];
+> 	Class objClass3 = object_getClass(obj1);
+> 	Class objClass4 = object_getClass(obj2);
+> 
+> 	// 3.根据类直接获取其 class 对象
+> 	Class objClass5 = [NSObject class];
+> 	```
+> 
+> 	- 以上 objClass1 ~ objClass5都是  NSObject 的 class 对象.并且它们都是同一个对象.每个类在内存中有且只有一个 class 对象.(打印内存地址都是一样的)
+> 	- class 对象在内存中存储的信息有哪些?
+> 		- isa 指针
+> 		- superclass 指针
+> 		- 类的`属性`信息(@property)
+> 		- 类的`对象方法`信息(instance method)
+> 		- 类的`协议`信息(protocol)
+> 		- 类的`成员变量`信息(ivar)
+> 		- 其他
+> 
 > - meta-class 对象(元类对象)
+> 
+
+
+### 一. instance 对象
 
 #### 1. OC对象、类主要是基于 C/C++的`结构体`实现的.
 
