@@ -36,7 +36,18 @@
 > 		- 其他
 > 
 > - meta-class 对象(元类对象)
+> 	- meta-class 对象获取办法:
 > 
+> 	```objc
+> 	Class objMetaClass = object_getClass([NSObject class]);
+> 	```
+> 
+> 	- 每个类在内存中有且只有一个 meta-class 对象
+> 	- meta-class 对象和 class 对象在内存中的结构是一样的,但是用途不一样,这样就导致他们存储的信息不同.(存储信息不同,但是结构一样,那么不存储的地方为 null)
+> 	- meta-class 在内存中存储的信息
+> 		- isa 指针
+> 		- superclass 指针
+> 		- 类的`类方法`信息(class method)
 
 
 ### 一. instance 对象
@@ -183,4 +194,8 @@ struct TYPerson_IMPL {
 
 - 属性,会自动生成下划线的成员变量和 SET 及 GET 方法.这里的 person 对象在内存中会多出一个带下划线的`_height`成员变量.但是其 GET 及 SET 方法并没有保存在 person 对象的内存中.
 - 方法其实是保存在 `TYPerson`类的方法列表中
+
+### 二. class 对象
+
+
 
