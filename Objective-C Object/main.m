@@ -18,6 +18,8 @@
     int age;
 }
 
+@property (nonatomic, assign) int height;
+
 @end
 
 @implementation TYPerson

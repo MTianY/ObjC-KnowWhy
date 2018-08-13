@@ -106,3 +106,40 @@ struct NSObject_IMPL {
 	Class isa;
 };
 ```
+
+#### 5.添加一个属性之后,内存占用情况又如何?
+
+- 添加一个 height 属性
+
+```objc
+@interface TYPerson : NSObject
+
+{
+    @public
+    int no;
+    int age;
+}
+
+@property (nonatomic, assign) int height;
+
+@end
+
+@implementation TYPerson
+
+@end
+```
+
+- 编译成 C++ 文件之后,其内存中表现形式为:
+
+```c++
+struct TYPerson_IMPL {
+	struct NSObject_IMPL NSObject_IVARS;
+	int no;
+	int age;
+	int _height;
+};
+```
+
+- 属性,会自动生成下划线的成员变量和 SET 及 GET 方法.这里的 person 对象在内存中会多出一个带下划线的`_height`成员变量.但是其 GET 及 SET 方法并没有保存在 person 对象的内存中.
+- 方法其实是保存在 `TYPerson`类的方法列表中
+

@@ -27,6 +27,7 @@
 		4C4E14FF2119EA9600BA1C70 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4C4E15092119F09A00BA1C70 /* mainArm64.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = mainArm64.cpp; sourceTree = "<group>"; };
 		4C4E150F211B473700BA1C70 /* mainPerson.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = mainPerson.cpp; sourceTree = "<group>"; };
+		4C4E15102121C1EC00BA1C70 /* mainProperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mainProperty.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +60,7 @@
 		4C4E14FE2119EA9600BA1C70 /* Objective-C Object */ = {
 			isa = PBXGroup;
 			children = (
+				4C4E15102121C1EC00BA1C70 /* mainProperty.cpp */,
 				4C4E150F211B473700BA1C70 /* mainPerson.cpp */,
 				4C4E15092119F09A00BA1C70 /* mainArm64.cpp */,
 				4C4E14FF2119EA9600BA1C70 /* main.m */,
