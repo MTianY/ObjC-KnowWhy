@@ -3,6 +3,10 @@
 > Objective-C 中的对象,主要分为3种
 > 
 > - instance 对象(实例对象)
+> 	- instance 对象就是通过类 alloc 出来的对象.每次调用 alloc 方法都会产生新的 instance 对象.它们分别占用不同的内存.
+> - instance 对象在内存中存储的信息?
+> 	- isa 指针
+> 	- 其他`成员变量`
 > - class 对象 (类对象)
 > - meta-class 对象(元类对象)
 
