@@ -195,7 +195,95 @@ struct TYPerson_IMPL {
 - 属性,会自动生成下划线的成员变量和 SET 及 GET 方法.这里的 person 对象在内存中会多出一个带下划线的`_height`成员变量.但是其 GET 及 SET 方法并没有保存在 person 对象的内存中.
 - 方法其实是保存在 `TYPerson`类的方法列表中
 
-### 二. class 对象
+
+### 二. isa 指针 & superclass 指针
+
+上面可以看到, instance 对象、class 对象、meta-class 对象中都有 isa 指针.那么其作用具体是什么?
+
+#### 1.isa 指针的概念
+
+| instance 对象 |  | class 对象 |  |  meta-class 对象 |
+| --- | --- | --- | --- | --- |
+| isa 指针 |  | isa 指针 |  |  isa 指针 |
+|其他成员变量| |superclass 指针| |superclass 指针| 
+|  | | 属性信息、对象方法、协议信息、成员变量信息等等 |  |  类方法 |
+
+- instance 对象的`isa`指针指向 class 对象
+    - 当调用其`对象方法`时,通过`instance 对象的 isa指针`找到`class 对象`,然后在class 对象中找到`对象方法`的实现进行调用
+- class 对象的`isa`指针指向 meta-class 对象
+    - 当调用其`类方法`时.通过`class 对象的 isa 指针`,找到`meta-class 对象`,然后在 meta-class 对象中找到`类方法`的实现进行调用  
+
+#### 2.superclass 指针的概念
+
+如果有个对象的继承关系如下. TYPerson 继承自 NSObject. TYStudent 继承自 TYPerson.其中有各自的成员变量、属性、和方法,如果 student 对象调用 TYPerson 的实例方法等等其调用流程是如何实现的?
+
+```objc
+#pragma mark - TYPerson
+@interface TYPerson : NSObject
+
+{
+    @public
+    int no;
+    int age;
+}
+
+@property (nonatomic, assign) int height;
+
+- (void)personIntanceMethod;
++ (void)personClassMethod;
+
+@end
+
+@implementation TYPerson
+
+- (void)personIntanceMethod {
+    
+}
+
++ (void)personClassMethod {
+    
+}
+
+@end
+
+#pragma mark - TYStudent
+@interface TYStudent : TYPerson
+
+{
+    int weight;
+}
+
+@property (nonatomic, copy) NSString *name;
+
+- (void)studentInstanceMethod;
++ (void)studentClassMethod;
+
+@end
+
+@implementation TYStudent
+
+- (void)studentInstanceMethod {
+    
+}
+
++ (void)studentClassMethod {
+    
+}
+
+@end
+
+// 子类 student 对象父类实例方法
+[student personInstanceMethod];
+```
 
 
+| TYStudent 的 class |  | TYPerson 的 class |  | NSObject 的 class |
+| --- | --- | --- | --- | --- |
+| isa 指针 |  | isa 指针 |  | isa指针 |
+| superclass 指针 |  | superclass 指针 |  | superclass 指针 |
+| 属性信息、对象方法、协议信息、成员变量信息 |  | 属性信息、对象方法、协议信息、成员变量信息 |  | 属性信息、对象方法、协议信息、成员变量信息 |
+
+student 对象调用其父类 TYPerson 的实例对象方法本质就是:
+
+- 通过 TYStudent 的 class 中的`superclass指针`,找到其父类`TYPerson 的 class 对象`,然后在 TYPerson 的 class 对象中找到其对象方法的实现,进行调用
 

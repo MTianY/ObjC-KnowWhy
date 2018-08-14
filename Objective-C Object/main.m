@@ -10,6 +10,7 @@
 #import <objc/runtime.h>
 #import <malloc/malloc.h>
 
+#pragma mark - TYPerson
 @interface TYPerson : NSObject
 
 {
@@ -20,12 +21,50 @@
 
 @property (nonatomic, assign) int height;
 
+- (void)personIntanceMethod;
++ (void)personClassMethod;
+
 @end
 
 @implementation TYPerson
 
+- (void)personIntanceMethod {
+    
+}
+
++ (void)personClassMethod {
+    
+}
+
 @end
 
+#pragma mark - TYStudent
+@interface TYStudent : TYPerson
+
+{
+    int weight;
+}
+
+@property (nonatomic, copy) NSString *name;
+
+- (void)studentInstanceMethod;
++ (void)studentClassMethod;
+
+@end
+
+@implementation TYStudent
+
+- (void)studentInstanceMethod {
+    
+}
+
++ (void)studentClassMethod {
+    
+}
+
+@end
+
+#pragma mark - main
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
         // insert code here...
@@ -50,6 +89,12 @@ int main(int argc, const char * argv[]) {
         
         NSUInteger person_pointAddressSize = malloc_size((__bridge const void *)(person));
         NSLog(@"person_pointAddressSize = %zd",person_pointAddressSize);
+        
+        TYStudent *student = [[TYStudent alloc] init];
+        
+        // student 调用父类的实例对象方法
+        [student personIntanceMethod];
+        
         
     }
     return 0;
