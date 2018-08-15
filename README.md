@@ -198,6 +198,11 @@ struct TYPerson_IMPL {
 
 ### 二. isa 指针 & superclass 指针
 
+比较经典的一张图:
+
+![4185621-379b14bf1226140a](https://lh3.googleusercontent.com/-UaaeJdIlzc4/W3Q0IbgsijI/AAAAAAAAAC4/WrTxS2VvzOchxgJkW2AIXQRVtjXVE87XgCHMYCw/I/4185621-379b14bf1226140a.png)
+
+
 上面可以看到, instance 对象、class 对象、meta-class 对象中都有 isa 指针.那么其作用具体是什么?
 
 #### 1.isa 指针的概念
@@ -213,7 +218,11 @@ struct TYPerson_IMPL {
 - class 对象的`isa`指针指向 meta-class 对象
     - 当调用其`类方法`时.通过`class 对象的 isa 指针`,找到`meta-class 对象`,然后在 meta-class 对象中找到`类方法`的实现进行调用  
 
-#### 2.superclass 指针的概念
+#### 2.class对象的 superclass 指针
+
+子类的class 对象的 superClass 指针指向其父类的 class 对象,同时父类的 superclass 指针指向基类的 class 对象.
+
+**2.1 子类对象调用父类的`对象方法`执行流程**
 
 如果有个对象的继承关系如下. TYPerson 继承自 NSObject. TYStudent 继承自 TYPerson.其中有各自的成员变量、属性、和方法,如果 student 对象调用 TYPerson 的实例方法等等其调用流程是如何实现的?
 
@@ -277,7 +286,7 @@ struct TYPerson_IMPL {
 ```
 
 
-| TYStudent 的 class |  | TYPerson 的 class |  | NSObject 的 class |
+| TYStudent 的 class 对象 |  | TYPerson 的 class 对象|  | NSObject 的 class 对象 |
 | --- | --- | --- | --- | --- |
 | isa 指针 |  | isa 指针 |  | isa指针 |
 | superclass 指针 |  | superclass 指针 |  | superclass 指针 |
@@ -285,5 +294,13 @@ struct TYPerson_IMPL {
 
 student 对象调用其父类 TYPerson 的实例对象方法本质就是:
 
-- 通过 TYStudent 的 class 中的`superclass指针`,找到其父类`TYPerson 的 class 对象`,然后在 TYPerson 的 class 对象中找到其对象方法的实现,进行调用
+- 通过 `TYStudent`的`实例对象的isa指针`,找到`TYStudent 的 class 对象`,然后通过`TYStudent 的 class 对象的 superclass 指针`找到它的父类`TYPerson的 class 对象`.然后在`TYPerson 的 class 对象中找到其对象方法进行调用`.
+- 如果调用基类 NSObject 的对象方法,流程一样.`TYStudent 实例对象的 isa 指针,先找到 TYStudent 的 class 对象,通过 TYStudent 的 class 对象中的 superclass 指针,找到 TYPerson 的 class 对象,然后通过 TYPerson 的 class 对象中的 superclass 指针,找到 NSObject 的 class 对象,从而调用其对象方法.`
+
+
+**2.2 子类调用父类的`类方法`执行流程**
+
+原理同上. 子类的 meta-class 对象中的 superclass 指针都是指向其父类的 meta-class 对象.然后去 meta-class 对象中找到类方法.完成调用
+
+
 
