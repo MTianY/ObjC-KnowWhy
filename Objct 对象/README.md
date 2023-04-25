@@ -14,13 +14,13 @@
 > 	// 1.创建 instance 对象
 > 	NSObject obj1 = [[NSObject alloc] init];
 > 	NSObject obj2 = [[NSObject alloc] init];
-> 
+> 	
 > 	// 2.获取 instance 对象的类对象
 > 	Class objClass1 = [obj1 class];
 > 	Class objClass2 = [obj2 class];
 > 	Class objClass3 = object_getClass(obj1);
 > 	Class objClass4 = object_getClass(obj2);
-> 
+> 	
 > 	// 3.根据类直接获取其 class 对象
 > 	Class objClass5 = [NSObject class];
 > 	```
@@ -118,6 +118,8 @@ NSLog(@"%zd",ivarSize);
 ```
 
 - 获取 objc 指针指向内存的大小,结果为16
+- OC 对象实际分配内存空间,内存对齐是**16** 的倍数.
+- `结构体`按其成员最宽的整数倍对齐, 比如`double`占 8 个字节, 那么会有`8, 16,32..`些情况
 
 ```objc
 #import <malloc/malloc.h>
@@ -126,6 +128,35 @@ NSUInteger pointAddressSize = malloc_size((__bridge const void *)(objc));
 ```
 
 - 所以说, NSObject 对象创建时内存为其开辟的16字节的控件,其中 isa 占用8字节大小.
+
+举例:
+
+```objc
+结构体:
+typedef struct {
+    int a;
+    char c;
+    int *b;
+} testStruct;	// sizeof(testStruct), 内存空间是 16
+/*
+ * int a; 需 4 个字节, 按最大 int*b 分 8 个字节, int a 后面的 char c 占 1 个字节, 能填下, 所以是 16 个字节
+ */
+
+typedef struct {
+    int a;
+    int *b;
+    char c;
+} testStruct1;	// sizeof(testStruct1). 内存空间是 24
+
+/*
+ * int a; 需 4 个字节.  按最大 int *b分 8 个字节. a 后面剩 4 个字节, 放不下 int *b; 所以 char c 占 1 个字节, 但给它分配 8 个字节. 共 24 字节.
+ */
+
+```
+
+- `sizeof(x)` 求 `x` 所占用的内存空间
+- `class_getInstanceSize([Person class])` 求出`Person`对象占用的内存空间
+- `malloc_size((__bridge const void *)(p))` 求`p`指向内存空间实际分配的空间
 
 #### 4.继承自 NSObject 的 TYPerson 类在内存中占用情况
 
