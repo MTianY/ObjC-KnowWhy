@@ -1,6 +1,9 @@
+[TOC]
+
 # objc_msgSend 方法详解
 
 ## 1. 消息机制.
+
 首先有这么一个类: `TYPerson`.
 
 - 它有个 `- (void)eat;`对象方法.
