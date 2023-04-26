@@ -1,5 +1,7 @@
 # README
 
+[TOC]
+
 [参考资料 1](https://www.jianshu.com/p/e883cc573dcf?utm_campaign=maleskine&utm_content=note&utm_medium=seo_notes&utm_source=recommendation)
 
 NSOperation 底层就是 GCD, 只不过比 GCD 更加面向对象,多了一些更简单实用的功能.
@@ -25,6 +27,16 @@ dispatch_async(dispatch_queue_t queue, dispatch_block_t block);
 同步和异步并不能影响任务是串行还是并发,只能决定任务在哪个线程中执行.
 
 ### GCD 的队列
+
+> 总结下:
+>
+> 1. `async` 异步函数, 具备开启子线程的能力, 但是传入的非主队列才行, 如果传入主队列, 还是主线程
+> 2. `sync` 同步函数, 立马在当前线程执行任务.
+> 3. 串行队列. 如`DISPATCH_QUEUE_SERIAL`. 表示任务一个接一个的执行.
+> 4. 并发队列, 如 `DISPATCH_QUEUE_CONCURRENT`, 表示多个任务可同时并发执行
+> 5. 队列是先进先出.
+> 6. 同一个队列, 如果是`sync`函数, 如果有多个任务, 必须等一个任务执行完了, 再执行下一个.
+> 7. 不同队列, 如果`sync`函数 , 可能互相之间没有影响
 
 #### 并发队列
 
@@ -66,7 +78,7 @@ dispatch_async(dispatch_queue_t queue, dispatch_block_t block);
     
     NSLog(@"执行任务3");
 }
-```  
+```
 
 答: 会产生死锁.
 
@@ -172,6 +184,7 @@ dispatch_async(dispatch_queue_t queue, dispatch_block_t block);
 
 ```objc
 dispatch_queue_t queue = dispatch_get_global_queue(0,0);
+// 如果换成 dispatch_get_main_queue() 主线程, 那么下面 [self performSelector:@selector(test) withObject:nil afterDelay: 0.0]; 就会执行了, 主线程默认开启 RunLoop
 dispatch_async(queue, ^{
     NSLog(@"1");
     [self performSelector:@selector(test) withObject:nil afterDelay: 0.0];
@@ -602,5 +615,4 @@ dispatch_barrier_async(queue, ^{
 
 });
 ```
-
 
