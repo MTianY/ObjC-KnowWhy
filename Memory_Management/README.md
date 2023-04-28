@@ -1,3 +1,5 @@
+[TOC]
+
 # 内存管理
 
 ## 使用 CADisplayLink, NSTimer 注意什么?
@@ -879,6 +881,6 @@ int main(int argc, const char * argv[]) {
 - 同时第二个`Observer`也监听了`KCFRunLoopBeforeExit(即将退出)`事件,会调用`objc_autoreleasePoolPop()` .
 
     
-所以,如果问局部变量什么时候释放? 那要看`ARC(现在都是 ARC)`是用`autoreleasePool` 技术还是`release`技术,如果是前者,那么要看 RunLoop, 如果是后者,大括号结束就立即释放.xin
 
+所以,如果问局部变量什么时候释放? 那要看`ARC(现在都是 ARC)`是用`autoreleasePool` 技术还是`release`技术,如果是前者,那么要看 RunLoop, 如果是后者,大括号结束就立即释放.xin
 

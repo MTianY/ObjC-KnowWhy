@@ -1,3 +1,5 @@
+[TOC]
+
 ## Objective-C 对象在内存中的表现形式.
 
 > Objective-C 中的对象,主要分为3种
@@ -14,13 +16,13 @@
 > 	// 1.创建 instance 对象
 > 	NSObject obj1 = [[NSObject alloc] init];
 > 	NSObject obj2 = [[NSObject alloc] init];
-> 	
+> 		
 > 	// 2.获取 instance 对象的类对象
 > 	Class objClass1 = [obj1 class];
 > 	Class objClass2 = [obj2 class];
 > 	Class objClass3 = object_getClass(obj1);
 > 	Class objClass4 = object_getClass(obj2);
-> 	
+> 		
 > 	// 3.根据类直接获取其 class 对象
 > 	Class objClass5 = [NSObject class];
 > 	```
