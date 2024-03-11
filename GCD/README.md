@@ -4,7 +4,382 @@
 
 [参考资料 1](https://www.jianshu.com/p/e883cc573dcf?utm_campaign=maleskine&utm_content=note&utm_medium=seo_notes&utm_source=recommendation)
 
+[参考资料 2 简书地址](https://www.jianshu.com/p/4b1d77054b35)
+
+
+
+## NSOperation
+
+使用子类
+
+- NSInvocationOperation
+- NSBlockOperation
+
 NSOperation 底层就是 GCD, 只不过比 GCD 更加面向对象,多了一些更简单实用的功能.
+
+#### NSInvocationOperation
+
+```objc
+- (void)useInvocationOperation {
+    NSInvocationOperation *op = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(task1) object:nil];
+    [op start];
+}
+
+- (void)task1 {
+    for (int i = 0; i< 2; i++) {
+        [NSThread sleepForTimeInterval:2];
+        NSLog(@"1---%@",[NSThread currentThread]);
+    }
+}
+
+// 打印:
+// 1---<_NSMainThread: 0x7fd220804ed0>{number = 1, name = main}
+// 1---<_NSMainThread: 0x7fd220804ed0>{number = 1, name = main}
+```
+
+可以看出, 在没有使用 `NSOperationQueue`, 在主线程中单独使用子类`NSInvocationOperation`执行一个操作的情况下, 操作是在`当前线程执行的, 并没有开启新线程.`
+
+#### NSBlockOperation
+
+```objc
+- (void)useBlockOperation {
+    NSBlockOperation *op = [NSBlockOperation blockOperationWithBlock:^{
+        for (int i = 0; i < 2; i++) {
+            [NSThread sleepForTimeInterval:2];
+            NSLog(@"2----%@",[NSThread currentThread]);
+        }
+    }];
+    [op start];
+}
+
+// 打印
+// 2----<_NSMainThread: 0x7fe086d04ed0>{number = 1, name = main}
+// 2----<_NSMainThread: 0x7fe086d04ed0>{number = 1, name = main}
+```
+
+可以看出, 没有使用`NSOperationQueue`, 在主线程中使用`NSOperationBlock`执行一个操作的情况下, `在当前线程执行的, 没有开启新的线程`.
+
+##### addExecutionBlock
+
+可以使用 `addExecutionBlock`添加操作
+
+```objc
+- (void)useBlockOperationAddExecutionBlock {
+    NSBlockOperation *op = [NSBlockOperation blockOperationWithBlock:^{
+        for (int i = 0; i<2; i++) {
+            [NSThread sleepForTimeInterval:2];
+            NSLog(@"1---%@",[NSThread currentThread]);
+        }
+    }];
+    
+    [op addExecutionBlock:^{
+        for (int i = 0; i<2; i++) {
+            [NSThread sleepForTimeInterval:2];
+            NSLog(@"2---%@",[NSThread currentThread]);
+        }
+    }];
+    
+    [op addExecutionBlock:^{
+        for (int i = 0; i<2; i++) {
+            [NSThread sleepForTimeInterval:2];
+            NSLog(@"3---%@",[NSThread currentThread]);
+        }
+    }];
+    
+    [op addExecutionBlock:^{
+        for (int i = 0; i<2; i++) {
+            [NSThread sleepForTimeInterval:2];
+            NSLog(@"4---%@",[NSThread currentThread]);
+        }
+    }];
+    
+    [op addExecutionBlock:^{
+        for (int i = 0; i<2; i++) {
+            [NSThread sleepForTimeInterval:2];
+            NSLog(@"5---%@",[NSThread currentThread]);
+        }
+    }];
+    
+    [op addExecutionBlock:^{
+        for (int i = 0; i<2; i++) {
+            [NSThread sleepForTimeInterval:2];
+            NSLog(@"6---%@",[NSThread currentThread]);
+        }
+    }];
+    
+    [op addExecutionBlock:^{
+        for (int i = 0; i<2; i++) {
+            [NSThread sleepForTimeInterval:2];
+            NSLog(@"7---%@",[NSThread currentThread]);
+        }
+    }];
+    
+    [op addExecutionBlock:^{
+        for (int i = 0; i<2; i++) {
+            [NSThread sleepForTimeInterval:2];
+            NSLog(@"8---%@",[NSThread currentThread]);
+        }
+    }];
+    
+    [op start];
+}
+
+/**
+ 1---<NSThread: 0x7fe31f744780>{number = 8, name = (null)}
+ 2---<_NSMainThread: 0x7fe320018510>{number = 1, name = main}
+ 4---<NSThread: 0x7fe3200c7470>{number = 9, name = (null)}
+ 3---<NSThread: 0x7fe3205a9f40>{number = 10, name = (null)}
+ 1---<NSThread: 0x7fe31f744780>{number = 8, name = (null)}
+ 2---<_NSMainThread: 0x7fe320018510>{number = 1, name = main}
+ 3---<NSThread: 0x7fe3205a9f40>{number = 10, name = (null)}
+ 4---<NSThread: 0x7fe3200c7470>{number = 9, name = (null)}
+ 5---<NSThread: 0x7fe31f744780>{number = 8, name = (null)}
+ 6---<NSThread: 0x7fe3205a9f40>{number = 10, name = (null)}
+ 8---<NSThread: 0x7fe3200c7470>{number = 9, name = (null)}
+ 7---<_NSMainThread: 0x7fe320018510>{number = 1, name = main}
+ 5---<NSThread: 0x7fe31f744780>{number = 8, name = (null)}
+ 6---<NSThread: 0x7fe3205a9f40>{number = 10, name = (null)}
+ 7---<_NSMainThread: 0x7fe320018510>{number = 1, name = main}
+ 8---<NSThread: 0x7fe3200c7470>{number = 9, name = (null)} 
+ 2---<NSThread: 0x7fe3205a9f40>{number = 10, name = (null)}
+ 1---<_NSMainThread: 0x7fe320018510>{number = 1, name = main}
+ 3---<NSThread: 0x7fe320597520>{number = 11, name = (null)}
+ 4---<NSThread: 0x7fe31f772a40>{number = 12, name = (null)}
+ 2---<NSThread: 0x7fe3205a9f40>{number = 10, name = (null)}
+ 1---<_NSMainThread: 0x7fe320018510>{number = 1, name = main}
+ 3---<NSThread: 0x7fe320597520>{number = 11, name = (null)}
+ 4---<NSThread: 0x7fe31f772a40>{number = 12, name = (null)}
+ 5---<_NSMainThread: 0x7fe320018510>{number = 1, name = main}
+ 6---<NSThread: 0x7fe3205a9f40>{number = 10, name = (null)}
+ 8---<NSThread: 0x7fe31f772a40>{number = 12, name = (null)}
+ 7---<NSThread: 0x7fe320597520>{number = 11, name = (null)}
+ 5---<_NSMainThread: 0x7fe320018510>{number = 1, name = main}
+ 6---<NSThread: 0x7fe3205a9f40>{number = 10, name = (null)}
+ 8---<NSThread: 0x7fe31f772a40>{number = 12, name = (null)}
+ 7---<NSThread: 0x7fe320597520>{number = 11, name = (null)}
+*/
+```
+
+可以看出`addExecutionBlock`中操作在不同线程并发执行.
+
+是否开启线程, 取决于操作个数, 当然也由系统决定.
+
+#### 自定义 NSOperation
+
+继承自 `NSOperation`. 重写`main`
+
+```objc
+
+@implementation TYOperation
+
+- (void)main {
+    if (!self.isCancelled) {
+        for (int i = 0; i < 2; i++) {
+            [NSThread sleepForTimeInterval:2];
+            NSLog(@"1---%@",[NSThread currentThread]);
+        }
+    }
+}
+
+@end
+
+- (void)useTYOperation {
+    TYOperation *op = [[TYOperation alloc] init];
+    [op start];
+}
+
+//打印
+// 1---<_NSMainThread: 0x7f79aed056e0>{number = 1, name = main}
+// 1---<_NSMainThread: 0x7f79aed056e0>{number = 1, name = main}
+```
+
+### NSOperationQueue
+
+- 主队列
+- 自定义队列
+
+添加到主队列的操作, 一般都会放到主线程执行, 除了使用`addExecutionBlock`添加的额外操作可能在其他线程执行.
+
+```objc
+NSOperationQueue *queue = [NSOperationQueue mainQueue];
+```
+
+添加到自定义队列, 会自动放到子线程执行, 同时包含了, 串行, 并发功能.
+
+```objc
+NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+```
+
+##### addOperation
+
+将操作添加到队列
+
+```objc
+- (void)addOperationToQueue {
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    
+    NSInvocationOperation *op1 = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(task1) object:nil];
+    
+    NSInvocationOperation *op2 = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(task2) object:nil];
+    
+    NSBlockOperation *op3 = [NSBlockOperation blockOperationWithBlock:^{
+        for (int i = 0; i < 2; i++) {
+            [NSThread sleepForTimeInterval:2];
+            NSLog(@"3---%@",[NSThread currentThread]);
+        }
+    }];
+    
+    [op3 addExecutionBlock:^{
+        for (int i = 0; i < 2; i++) {
+            [NSThread sleepForTimeInterval:2];
+            NSLog(@"4---%@",[NSThread currentThread]);
+        }
+    }];
+    
+    [queue addOperation:op1];
+    [queue addOperation:op2];
+    [queue addOperation:op3];
+    
+}
+
+2---<NSThread: 0x7fd926f2c1b0>{number = 3, name = (null)}
+4---<NSThread: 0x7fd927d45fa0>{number = 4, name = (null)}
+1---<NSThread: 0x7fd926f454f0>{number = 6, name = (null)}
+3---<NSThread: 0x7fd926f28530>{number = 7, name = (null)}
+2---<NSThread: 0x7fd926f2c1b0>{number = 3, name = (null)}
+4---<NSThread: 0x7fd927d45fa0>{number = 4, name = (null)}
+1---<NSThread: 0x7fd926f454f0>{number = 6, name = (null)}
+3---<NSThread: 0x7fd926f28530>{number = 7, name = (null)}
+```
+
+可以看出, 开启新线程, 并发执行
+
+
+
+```objc
+- (void)addOperationBlockQueue {
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    [queue addOperationWithBlock:^{
+        for (int i = 0; i < 2; i++) {
+            [NSThread sleepForTimeInterval:2];
+            NSLog(@"1---%@",[NSThread currentThread]);
+        }
+    }];
+    [queue addOperationWithBlock:^{
+        for (int i = 0; i < 2; i++) {
+            [NSThread sleepForTimeInterval:2];
+            NSLog(@"2---%@",[NSThread currentThread]);
+        }
+    }];
+    [queue addOperationWithBlock:^{
+        for (int i = 0; i < 2; i++) {
+            [NSThread sleepForTimeInterval:2];
+            NSLog(@"3---%@",[NSThread currentThread]);
+        }
+    }];
+}
+
+```
+
+#### 控制最大并发数 maxConcurrentOperationCount
+
+- 默认值 -1, 表示不尽兴限制并发数
+- 值为 1, 表示队列为串行队列.只能串行执行
+- 值大于 1, 并发队列. 但不能超系统限制, 无线设置大值也没用.
+
+```objc
+- (void)addOperationBlockQueue {
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    
+  
+    queue.maxConcurrentOperationCount = 2;	// 控制最大并发数, 如果为 1, 则串行, 大于 1 或不设置则并发
+    
+    [queue addOperationWithBlock:^{
+        for (int i = 0; i < 2; i++) {
+            [NSThread sleepForTimeInterval:2];
+            NSLog(@"1---%@",[NSThread currentThread]);
+        }
+    }];
+    [queue addOperationWithBlock:^{
+        for (int i = 0; i < 2; i++) {
+            [NSThread sleepForTimeInterval:2];
+            NSLog(@"2---%@",[NSThread currentThread]);
+        }
+    }];
+    [queue addOperationWithBlock:^{
+        for (int i = 0; i < 2; i++) {
+            [NSThread sleepForTimeInterval:2];
+            NSLog(@"3---%@",[NSThread currentThread]);
+        }
+    }];
+}
+```
+
+#### 操作依赖
+
+```objc
+- (void)addDependency {
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    
+    queue.maxConcurrentOperationCount = 2;
+    
+    NSBlockOperation *op1 = [NSBlockOperation blockOperationWithBlock:^{
+        for (int i = 0; i < 2; i++) {
+            [NSThread sleepForTimeInterval:2];
+            NSLog(@"1---%@",[NSThread currentThread]);
+        }
+    }];
+    
+    NSBlockOperation *op2 = [NSBlockOperation blockOperationWithBlock:^{
+        for (int i = 0; i < 2; i++) {
+            [NSThread sleepForTimeInterval:2];
+            NSLog(@"2---%@",[NSThread currentThread]);
+        }
+    }];
+    
+    // op2 依赖 op1
+    [op2 addDependency:op1];
+    
+    [queue addOperation:op1];
+    [queue addOperation:op2];
+}
+
+// 先执行完 op1, 再执行 op2, 貌似不收并发数限制, 一个一个执行的 op1, 然后一个一个执行的 op2
+```
+
+#### NSOperation 优先级
+
+适用于同一操作队列, 不适用于不同的操作队列.
+
+#### 线程间通信
+
+```objc
+- (void)comunication {
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    [queue addOperationWithBlock:^{
+        for (int i = 0; i < 2; i++) {
+            [NSThread sleepForTimeInterval:2];
+            NSLog(@"1---%@",[NSThread currentThread]);
+        }
+        
+        // 回主线程
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            for (int i = 0; i < 2; i++) {
+                [NSThread sleepForTimeInterval:2];
+                NSLog(@"2---%@",[NSThread currentThread]);
+            }
+        }];
+    }];
+}
+
+//打印
+1---<NSThread: 0x7f89f37264a0>{number = 8, name = (null)}
+1---<NSThread: 0x7f89f37264a0>{number = 8, name = (null)}
+2---<_NSMainThread: 0x7f89f4506bf0>{number = 1, name = main}
+2---<_NSMainThread: 0x7f89f4506bf0>{number = 1, name = main}
+```
+
+
 
 ### GCD 常用函数
 
