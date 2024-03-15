@@ -15,6 +15,8 @@
 - NSInvocationOperation
 - NSBlockOperation
 
+进程是系统正在运行的一个程序, 线程是进程运行的基本单元, 一个进程至少有一个线程来执行其任务. 默认主线程.
+
 NSOperation 底层就是 GCD, 只不过比 GCD 更加面向对象,多了一些更简单实用的功能.
 
 #### NSInvocationOperation
